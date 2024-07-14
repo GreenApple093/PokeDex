@@ -39,12 +39,12 @@ const PokemonDetails = ({ selectedPokemon }) => {
 
   if (!selectedPokemon) {
     return (
-      <div className="relative flex flex-col items-center justify-center h-full text-gray-500 bg-white rounded-tr-xl rounded-tl-xl">
-        <div className='relative'>
+      <div className="flex flex-col items-center justify-center h-full text-gray-500 bg-white rounded-xl rounded-tl-xl">
+        <div className='flex justify-center items-center'>
           <img
             src="src/def-pokemon.png"
             alt=""
-            className='w-full h-auto max-h-48 object-contain top-[-50px] left-1/2 transform -translate-x-1/2'
+            className='w-full h-auto max-h-48 object-contain'
           />
         </div>
         <div className='mt-20'>
