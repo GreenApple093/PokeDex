@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Search from './components/Search/Search';
 import PokemonGrid from './components/PokemonGrid/PokemonGrid';
 import PokemonDetails from './components/PokemonDetails/PokemonDetails';
+import loaderImg from './assets/5.png'
 
 function App() {
   const [pokemonList, setPokemonList] = useState([]);
@@ -104,7 +105,7 @@ function App() {
 
 const Loader = () => (
   <div className="flex justify-center items-center h-screen w-screen bg-ivory">
-    <img className="w-12 h-12 animate-spin" src="/5.png" alt="Loading" />
+    <img className="w-12 h-12 animate-spin" src={loaderImg} alt="Loading" />
   </div>
 );
 

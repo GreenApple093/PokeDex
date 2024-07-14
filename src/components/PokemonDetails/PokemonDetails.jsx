@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import blankImg from '../../assets/def-pokemon.png'
 const statMapping = {
   hp: 'HP',
   attack: 'ATK',
@@ -9,7 +9,7 @@ const statMapping = {
   speed: 'SPD',
 };
 
-let tot = 0;
+
 const typeColors = {
   normal: 'bg-gray-400',
   fire: 'bg-orange-500',
@@ -42,7 +42,7 @@ const PokemonDetails = ({ selectedPokemon }) => {
       <div className="flex flex-col items-center justify-center h-full text-gray-500 bg-white rounded-xl rounded-tl-xl">
         <div className='flex justify-center items-center'>
           <img
-            src="/def-pokemon.png"
+            src={blankImg}
             alt=""
             className='w-full h-auto max-h-48 object-contain'
           />
