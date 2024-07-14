@@ -13,74 +13,53 @@ function App() {
   useEffect(() => {
     const fetchAllPokemons = async () => {
       setIsLoading(true);
-      const allPokemons = [];
-      const limit = 60; // Number of Pokémon to fetch per request
-      let offset = 0;
-
-      while (offset < 870) {
-        const url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
+      try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=60`);
+        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
 
-        // Fetch details for each Pokémon to get their types
         const detailedPokemons = await Promise.all(
           data.results.map(async (pokemon) => {
-            const response = await fetch(pokemon.url);
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            const pokemonData = await response.json();
-
+            const pokemonResponse = await fetch(pokemon.url);
+            if (!pokemonResponse.ok) throw new Error('Network response was not ok');
+            const pokemonData = await pokemonResponse.json();
             return {
               ...pokemon,
               id: pokemonData.id,
               types: pokemonData.types.map(typeInfo => typeInfo.type.name),
               stats: pokemonData.stats.map(statInfo => ({
                 base_stat: statInfo.base_stat,
-                stat: statInfo.stat.name
+                stat: statInfo.stat.name,
               })),
               height: pokemonData.height / 10,
               weight: pokemonData.weight / 10,
               abilities: pokemonData.abilities.map(abilityInfo => abilityInfo.ability.name),
-              description: "No description available." // Placeholder for description
+              description: "No description available",
             };
           })
         );
 
-        allPokemons.push(...detailedPokemons);
-
-        offset += limit;
+        setPokemonList(detailedPokemons);
+      } catch (error) {
+        console.error('Error fetching Pokémon data:', error);
+      } finally {
+        setIsLoading(false);
       }
-
-      setPokemonList(allPokemons);
-      setIsLoading(false);
     };
 
     fetchAllPokemons();
   }, []);
 
-  // Effect to fetch species data when a Pokémon is selected
   useEffect(() => {
     const fetchSpeciesData = async (pokemonId) => {
       if (!pokemonId) return;
-
       setIsSpeciesLoading(true);
-
       try {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`);
+        if (!response.ok) throw new Error('Network response was not ok');
         const speciesData = await response.json();
-
         const description = speciesData.flavor_text_entries.find(entry => entry.language.name === 'en')?.flavor_text || "No description available.";
-
-        setSelectedPokemon((prev) => ({
-          ...prev,
-          description,
-        }));
+        setSelectedPokemon(prev => ({ ...prev, description }));
       } catch (error) {
         console.error('Error fetching species data:', error);
       } finally {
@@ -115,12 +94,8 @@ function App() {
             onPokemonSelect={setSelectedPokemon}
           />
         </div>
-        <div className='w-1/3 h-full '>
-          <PokemonDetails 
-            className='h-full'
-            selectedPokemon={selectedPokemon} 
-            isLoading={isSpeciesLoading} 
-          />
+        <div className='w-1/3 h-full'>
+          <PokemonDetails className='h-full' selectedPokemon={selectedPokemon} isLoading={isSpeciesLoading} />
         </div>
       </div>
     </div>
@@ -129,7 +104,7 @@ function App() {
 
 const Loader = () => (
   <div className="flex justify-center items-center h-screen w-screen bg-ivory">
-    <img className="w-12 h-12 animate-spin" src="src/5.png" alt="Loading" />
+    <img className="w-12 h-12 animate-spin" src="/5.png" alt="Loading" />
   </div>
 );
 

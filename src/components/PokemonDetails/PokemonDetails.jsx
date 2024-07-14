@@ -42,7 +42,7 @@ const PokemonDetails = ({ selectedPokemon }) => {
       <div className="flex flex-col items-center justify-center h-full text-gray-500 bg-white rounded-xl rounded-tl-xl">
         <div className='flex justify-center items-center'>
           <img
-            src="src/def-pokemon.png"
+            src="/def-pokemon.png"
             alt=""
             className='w-full h-auto max-h-48 object-contain'
           />
