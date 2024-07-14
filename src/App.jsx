@@ -3,6 +3,7 @@ import Search from './components/Search/Search';
 import PokemonGrid from './components/PokemonGrid/PokemonGrid';
 import PokemonDetails from './components/PokemonDetails/PokemonDetails';
 import loaderImg from './assets/5.png'
+import { Analytics } from '@vercel/analytics';
 
 function App() {
   const [pokemonList, setPokemonList] = useState([]);
@@ -99,6 +100,7 @@ function App() {
           <PokemonDetails className='h-full' selectedPokemon={selectedPokemon} isLoading={isSpeciesLoading} />
         </div>
       </div>
+      <Analytics />
     </div>
   );
 }
