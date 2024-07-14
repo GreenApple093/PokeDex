@@ -117,8 +117,10 @@ function App() {
         </div>
         <div className='w-1/3 h-full '>
           <PokemonDetails 
-          className='h-full'
-          selectedPokemon={selectedPokemon} isLoading={isSpeciesLoading} />
+            className='h-full'
+            selectedPokemon={selectedPokemon} 
+            isLoading={isSpeciesLoading} 
+          />
         </div>
       </div>
     </div>
