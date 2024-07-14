@@ -3,7 +3,8 @@ import Search from './components/Search/Search';
 import PokemonGrid from './components/PokemonGrid/PokemonGrid';
 import PokemonDetails from './components/PokemonDetails/PokemonDetails';
 import loaderImg from './assets/5.png'
-import { Analytics } from '@vercel/analytics';
+import { Analytics } from '@vercel/analytics/react';
+
 
 function App() {
   const [pokemonList, setPokemonList] = useState([]);
