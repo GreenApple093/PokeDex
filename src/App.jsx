@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react';
 import Search from './components/Search/Search';
 import PokemonGrid from './components/PokemonGrid/PokemonGrid';
 import PokemonDetails from './components/PokemonDetails/PokemonDetails';
-import loaderImg from './assets/5.png'
-
-
+import loaderImg from './assets/5.png';
 
 function App() {
   const [pokemonList, setPokemonList] = useState([]);
@@ -16,13 +14,32 @@ function App() {
   useEffect(() => {
     const fetchAllPokemons = async () => {
       setIsLoading(true);
-      try {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=60`);
-        if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
+      const allPokemons = [];
+      const MAX_POKEMON_COUNT = 898;  // Limit to 898 Pokémon
 
+      const fetchPokemons = async (url) => {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error('Network response was not ok');
+          const data = await response.json();
+          allPokemons.push(...data.results);
+
+          if (data.next && allPokemons.length < MAX_POKEMON_COUNT) {
+            await fetchPokemons(data.next);
+          }
+        } catch (error) {
+          throw error;
+        }
+      };
+
+      try {
+        await fetchPokemons('https://pokeapi.co/api/v2/pokemon?limit=100');
+        
+        // Limit the results to the first 898 Pokémon
+        const limitedPokemons = allPokemons.slice(0, MAX_POKEMON_COUNT);
+        
         const detailedPokemons = await Promise.all(
-          data.results.map(async (pokemon) => {
+          limitedPokemons.map(async (pokemon) => {
             const pokemonResponse = await fetch(pokemon.url);
             if (!pokemonResponse.ok) throw new Error('Network response was not ok');
             const pokemonData = await pokemonResponse.json();
@@ -101,7 +118,6 @@ function App() {
           <PokemonDetails className='h-full' selectedPokemon={selectedPokemon} isLoading={isSpeciesLoading} />
         </div>
       </div>
-
     </div>
   );
 }
