@@ -19,8 +19,13 @@ function App() {
 
       const fetchPokemons = async (url) => {
         try {
+          console.log(`Fetching: ${url}`);
           const response = await fetch(url);
-          if (!response.ok) throw new Error('Network response was not ok');
+          console.log(`Response Status: ${response.status}`);
+          if (!response.ok) {
+            console.error(`Error fetching data from ${url}: ${response.statusText}`);
+            throw new Error('Network response was not ok');
+          }
           const data = await response.json();
           allPokemons.push(...data.results);
 
@@ -28,6 +33,7 @@ function App() {
             await fetchPokemons(data.next);
           }
         } catch (error) {
+          console.error(`Error during fetchPokemons: ${error.message}`);
           throw error;
         }
       };
@@ -40,22 +46,32 @@ function App() {
         
         const detailedPokemons = await Promise.all(
           limitedPokemons.map(async (pokemon) => {
-            const pokemonResponse = await fetch(pokemon.url);
-            if (!pokemonResponse.ok) throw new Error('Network response was not ok');
-            const pokemonData = await pokemonResponse.json();
-            return {
-              ...pokemon,
-              id: pokemonData.id,
-              types: pokemonData.types.map(typeInfo => typeInfo.type.name),
-              stats: pokemonData.stats.map(statInfo => ({
-                base_stat: statInfo.base_stat,
-                stat: statInfo.stat.name,
-              })),
-              height: pokemonData.height / 10,
-              weight: pokemonData.weight / 10,
-              abilities: pokemonData.abilities.map(abilityInfo => abilityInfo.ability.name),
-              description: "No description available",
-            };
+            try {
+              console.log(`Fetching details for: ${pokemon.name}`);
+              const pokemonResponse = await fetch(pokemon.url);
+              console.log(`Response Status: ${pokemonResponse.status}`);
+              if (!pokemonResponse.ok) {
+                console.error(`Error fetching data for ${pokemon.name}: ${pokemonResponse.statusText}`);
+                throw new Error('Network response was not ok');
+              }
+              const pokemonData = await pokemonResponse.json();
+              return {
+                ...pokemon,
+                id: pokemonData.id,
+                types: pokemonData.types.map(typeInfo => typeInfo.type.name),
+                stats: pokemonData.stats.map(statInfo => ({
+                  base_stat: statInfo.base_stat,
+                  stat: statInfo.stat.name,
+                })),
+                height: pokemonData.height / 10,
+                weight: pokemonData.weight / 10,
+                abilities: pokemonData.abilities.map(abilityInfo => abilityInfo.ability.name),
+                description: "No description available",
+              };
+            } catch (error) {
+              console.error(`Error fetching details for ${pokemon.name}: ${error.message}`);
+              throw error;
+            }
           })
         );
 
@@ -75,13 +91,18 @@ function App() {
       if (!pokemonId) return;
       setIsSpeciesLoading(true);
       try {
+        console.log(`Fetching species data for ID: ${pokemonId}`);
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`);
-        if (!response.ok) throw new Error('Network response was not ok');
+        console.log(`Response Status: ${response.status}`);
+        if (!response.ok) {
+          console.error(`Error fetching species data for ID ${pokemonId}: ${response.statusText}`);
+          throw new Error('Network response was not ok');
+        }
         const speciesData = await response.json();
         const description = speciesData.flavor_text_entries.find(entry => entry.language.name === 'en')?.flavor_text || "No description available.";
         setSelectedPokemon(prev => ({ ...prev, description }));
       } catch (error) {
-        console.error('Error fetching species data:', error);
+        console.error(`Error fetching species data for ID ${pokemonId}: ${error.message}`);
       } finally {
         setIsSpeciesLoading(false);
       }
