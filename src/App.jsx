@@ -46,31 +46,37 @@ function App() {
         
         const detailedPokemons = await Promise.all(
           limitedPokemons.map(async (pokemon) => {
-            try {
-              console.log(`Fetching details for: ${pokemon.name}`);
-              const pokemonResponse = await fetch(pokemon.url);
-              console.log(`Response Status: ${pokemonResponse.status}`);
-              if (!pokemonResponse.ok) {
-                console.error(`Error fetching data for ${pokemon.name}: ${pokemonResponse.statusText}`);
-                throw new Error('Network response was not ok');
+            let retries = 3;
+            while (retries > 0) {
+              try {
+                console.log(`Fetching details for: ${pokemon.name}`);
+                const pokemonResponse = await fetch(pokemon.url);
+                console.log(`Response Status: ${pokemonResponse.status}`);
+                if (!pokemonResponse.ok) {
+                  console.error(`Error fetching data for ${pokemon.name}: ${pokemonResponse.statusText}`);
+                  throw new Error('Network response was not ok');
+                }
+                const pokemonData = await pokemonResponse.json();
+                return {
+                  ...pokemon,
+                  id: pokemonData.id,
+                  types: pokemonData.types.map(typeInfo => typeInfo.type.name),
+                  stats: pokemonData.stats.map(statInfo => ({
+                    base_stat: statInfo.base_stat,
+                    stat: statInfo.stat.name,
+                  })),
+                  height: pokemonData.height / 10,
+                  weight: pokemonData.weight / 10,
+                  abilities: pokemonData.abilities.map(abilityInfo => abilityInfo.ability.name),
+                  description: "No description available",
+                };
+              } catch (error) {
+                retries -= 1;
+                console.error(`Error fetching details for ${pokemon.name}: ${error.message}. Retries left: ${retries}`);
+                if (retries === 0) {
+                  throw error;
+                }
               }
-              const pokemonData = await pokemonResponse.json();
-              return {
-                ...pokemon,
-                id: pokemonData.id,
-                types: pokemonData.types.map(typeInfo => typeInfo.type.name),
-                stats: pokemonData.stats.map(statInfo => ({
-                  base_stat: statInfo.base_stat,
-                  stat: statInfo.stat.name,
-                })),
-                height: pokemonData.height / 10,
-                weight: pokemonData.weight / 10,
-                abilities: pokemonData.abilities.map(abilityInfo => abilityInfo.ability.name),
-                description: "No description available",
-              };
-            } catch (error) {
-              console.error(`Error fetching details for ${pokemon.name}: ${error.message}`);
-              throw error;
             }
           })
         );
