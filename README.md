@@ -43,6 +43,4 @@ A huge shoutout to **GPT**, my tireless coding companion, for providing endless 
 
 This project is licensed under the MIT License—so feel free to use it, modify it, and (dare I say) break it!
 
-## Demo
 
-Check it out live at (https://pokedex-vercel-first.vercel.app/). Yes, it’s real, and yes, it might even work most of the time!
