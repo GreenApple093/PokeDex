@@ -114,7 +114,7 @@ const PokemonDetails = ({ selectedPokemon }) => {
               </div>
             ))}
           </div>
-          <h4 className="mt-5 text-lg font-bold">Evolution</h4>
+          {/* <h4 className="mt-5 text-lg font-bold">Evolution</h4> */}
           {/* <div id="current-pokemon-evolution-chain-container" className="flex justify-center space-x-4">
           {selectedPokemon.evolution_chain.map((evolution, index) => (
             <div key={index} className="flex flex-col items-center">
